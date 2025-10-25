@@ -36,7 +36,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     if method == 'GET':
         conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute('SELECT id, name, username, description, photo_url, caste, views, created_at FROM fame_profiles ORDER BY views DESC')
+        cur.execute('SELECT id, name, username, description, photo_url, caste, views, likes, created_at FROM fame_profiles ORDER BY views DESC')
         rows = cur.fetchall()
         
         profiles = []
@@ -49,7 +49,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'photo_url': row[4],
                 'caste': row[5],
                 'views': row[6],
-                'created_at': row[7].isoformat() if row[7] else None
+                'likes': row[7],
+                'created_at': row[8].isoformat() if row[8] else None
             })
         
         cur.close()
@@ -100,6 +101,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     if method == 'PUT':
         params = event.get('queryStringParameters', {})
         profile_id = params.get('id')
+        action = params.get('action', 'view')
         
         if not profile_id:
             return {
@@ -111,17 +113,32 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         
         conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute('UPDATE fame_profiles SET views = views + 1 WHERE id = %s', (profile_id,))
-        conn.commit()
-        cur.close()
-        conn.close()
         
-        return {
-            'statusCode': 200,
-            'headers': headers,
-            'body': json.dumps({'message': 'View incremented'}),
-            'isBase64Encoded': False
-        }
+        if action == 'like':
+            cur.execute('UPDATE fame_profiles SET likes = likes + 1 WHERE id = %s RETURNING likes', (profile_id,))
+            new_likes = cur.fetchone()[0]
+            conn.commit()
+            cur.close()
+            conn.close()
+            
+            return {
+                'statusCode': 200,
+                'headers': headers,
+                'body': json.dumps({'message': 'Like added', 'likes': new_likes}),
+                'isBase64Encoded': False
+            }
+        else:
+            cur.execute('UPDATE fame_profiles SET views = views + 1 WHERE id = %s', (profile_id,))
+            conn.commit()
+            cur.close()
+            conn.close()
+            
+            return {
+                'statusCode': 200,
+                'headers': headers,
+                'body': json.dumps({'message': 'View incremented'}),
+                'isBase64Encoded': False
+            }
     
     if method == 'PATCH':
         params = event.get('queryStringParameters', {})

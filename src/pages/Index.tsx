@@ -18,6 +18,7 @@ interface Profile {
   photo_url: string;
   caste: string;
   views: number;
+  likes: number;
 }
 
 const CASTES = ['главный фейм', 'фейм', 'средний фейм', 'малый фейм', 'новичок', 'скамер'];
@@ -73,6 +74,28 @@ const Index = () => {
       } catch (error) {
         console.error('Error incrementing view:', error);
       }
+    }
+  };
+
+  const handleProfileLike = async (profile: Profile) => {
+    const likedKey = `liked_profile_${profile.id}`;
+    const hasLiked = localStorage.getItem(likedKey);
+    
+    if (hasLiked) return;
+    
+    try {
+      const response = await fetch(`https://functions.poehali.dev/eb6fcdbf-3fd0-41ea-ba77-12004c31e7eb?id=${profile.id}&action=like`, {
+        method: 'PUT'
+      });
+      const data = await response.json();
+      
+      localStorage.setItem(likedKey, 'true');
+      
+      setProfiles(prev => prev.map(p => 
+        p.id === profile.id ? { ...p, likes: data.likes } : p
+      ));
+    } catch (error) {
+      console.error('Error adding like:', error);
     }
   };
 
@@ -206,7 +229,11 @@ const Index = () => {
                 className="animate-fade-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <ProfileCard profile={profile} onClick={() => handleProfileClick(profile)} />
+                <ProfileCard 
+                  profile={profile} 
+                  onClick={() => handleProfileClick(profile)} 
+                  onLike={() => handleProfileLike(profile)}
+                />
               </div>
             ))}
           </div>

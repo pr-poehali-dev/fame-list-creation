@@ -11,11 +11,13 @@ interface Profile {
   photo_url: string;
   caste: string;
   views: number;
+  likes: number;
 }
 
 interface ProfileCardProps {
   profile: Profile;
   onClick: () => void;
+  onLike: (e: React.MouseEvent) => void;
 }
 
 const getCasteBadgeColor = (caste: string) => {
@@ -37,10 +39,16 @@ const getCasteBadgeColor = (caste: string) => {
   }
 };
 
-const ProfileCard = ({ profile, onClick }: ProfileCardProps) => {
+const ProfileCard = ({ profile, onClick, onLike }: ProfileCardProps) => {
   const handleClick = () => {
     playClickSound();
     onClick();
+  };
+
+  const handleLike = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    playClickSound();
+    onLike(e);
   };
 
   return (
@@ -78,9 +86,18 @@ const ProfileCard = ({ profile, onClick }: ProfileCardProps) => {
           {profile.name}
         </h3>
         {profile.username && (
-          <p className="text-secondary neon-cyan-glow text-[10px] md:text-xs font-roboto truncate">
-            {profile.username}
-          </p>
+          <div className="flex items-center justify-between gap-1">
+            <p className="text-secondary neon-cyan-glow text-[10px] md:text-xs font-roboto truncate">
+              {profile.username}
+            </p>
+            <button
+              onClick={handleLike}
+              className="flex items-center gap-0.5 text-neon-pink hover:text-neon-purple transition-colors hover:scale-110 active:scale-95 transform duration-200"
+            >
+              <Icon name="Heart" size={12} className="md:w-4 md:h-4" />
+              <span className="text-[10px] md:text-xs font-roboto font-bold">{profile.likes || 0}</span>
+            </button>
+          </div>
         )}
       </div>
     </Card>
