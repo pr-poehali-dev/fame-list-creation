@@ -10,6 +10,8 @@ from typing import Dict, Any
 
 def get_db_connection():
     dsn = os.environ.get('DATABASE_URL')
+    if not dsn:
+        raise ValueError('DATABASE_URL environment variable is not set')
     return psycopg2.connect(dsn)
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:

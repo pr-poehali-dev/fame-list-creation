@@ -57,7 +57,9 @@ const Index = () => {
 
   useEffect(() => {
     loadProfiles();
-    
+  }, []);
+
+  useEffect(() => {
     const liked = new Set<number>();
     profiles.forEach(p => {
       if (localStorage.getItem(`liked_profile_${p.id}`)) {
@@ -65,7 +67,7 @@ const Index = () => {
       }
     });
     setLikedProfiles(liked);
-  }, []);
+  }, [profiles]);
 
   const handleProfileClick = async (profile: Profile) => {
     setSelectedProfile(profile);
