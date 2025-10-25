@@ -90,9 +90,10 @@ const Index = () => {
                 FAME LIST
               </h1>
               <p 
-                className="text-xs text-muted-foreground font-roboto mt-1 cursor-pointer hover:text-primary transition-colors"
+                className="text-xs text-muted-foreground font-roboto mt-1 cursor-pointer hover:text-primary transition-colors flex items-center gap-1"
                 onClick={() => window.open('https://t.me/telorezov', '_blank')}
               >
+                <Icon name="Send" size={12} className="hover:text-secondary transition-colors" />
                 владелец @telorezov
               </p>
             </div>
