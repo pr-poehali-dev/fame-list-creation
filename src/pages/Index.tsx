@@ -135,10 +135,10 @@ const Index = () => {
         <div className="mb-12 text-center">
           <Button
             onClick={() => window.open('https://t.me/adtelorezova', '_blank')}
-            className="mb-4 bg-gradient-to-r from-neon-purple to-neon-pink hover:from-neon-purple/80 hover:to-neon-pink/80 neon-border font-orbitron"
+            className="mb-4 bg-gradient-to-r from-neon-purple to-neon-pink hover:from-neon-purple/80 hover:to-neon-pink/80 neon-border font-orbitron border-2 hover:animate-glow-pulse hover:animate-rainbow-border transition-all duration-300"
             size="sm"
           >
-            <Icon name="Send" className="mr-2" size={16} />
+            <Icon name="Send" className="mr-2 animate-pulse" size={16} />
             Adapter создателя
           </Button>
           <p className="text-muted-foreground text-lg font-roboto mb-6">
