@@ -12,7 +12,7 @@ interface PasswordDialogProps {
   onSuccess: () => void;
 }
 
-const ADMIN_PASSWORD = 'admin123';
+const ADMIN_PASSWORD = 'my-super-secret-jwt-key-2025-telorezov-casino-auth';
 
 const PasswordDialog = ({ isOpen, onClose, onSuccess }: PasswordDialogProps) => {
   const [password, setPassword] = useState('');
