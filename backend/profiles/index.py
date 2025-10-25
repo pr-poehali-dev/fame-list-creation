@@ -116,7 +116,19 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         
         if action == 'like':
             cur.execute('UPDATE fame_profiles SET likes = likes + 1 WHERE id = %s RETURNING likes', (profile_id,))
-            new_likes = cur.fetchone()[0]
+            result = cur.fetchone()
+            
+            if result is None:
+                cur.close()
+                conn.close()
+                return {
+                    'statusCode': 404,
+                    'headers': headers,
+                    'body': json.dumps({'error': 'Profile not found'}),
+                    'isBase64Encoded': False
+                }
+            
+            new_likes = result[0]
             conn.commit()
             cur.close()
             conn.close()
