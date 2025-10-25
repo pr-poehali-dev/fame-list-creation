@@ -33,6 +33,7 @@ const AdminPanel = ({ onProfileAdded }: AdminPanelProps) => {
   const [loading, setLoading] = useState(false);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loadingProfiles, setLoadingProfiles] = useState(true);
+  const [editingProfile, setEditingProfile] = useState<Profile | null>(null);
   const { toast } = useToast();
 
   const loadProfiles = async () => {
@@ -112,14 +113,18 @@ const AdminPanel = ({ onProfileAdded }: AdminPanelProps) => {
   };
 
   const saveProfile = async (photoUrl: string) => {
-    const response = await fetch('https://functions.poehali.dev/eb6fcdbf-3fd0-41ea-ba77-12004c31e7eb', {
-      method: 'POST',
+    const url = editingProfile
+      ? `https://functions.poehali.dev/eb6fcdbf-3fd0-41ea-ba77-12004c31e7eb?id=${editingProfile.id}`
+      : 'https://functions.poehali.dev/eb6fcdbf-3fd0-41ea-ba77-12004c31e7eb';
+    
+    const response = await fetch(url, {
+      method: editingProfile ? 'PATCH' : 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name,
         username,
         description,
-        photo_url: photoUrl,
+        photo_url: photoUrl || (editingProfile?.photo_url || ''),
         caste
       })
     });
@@ -127,7 +132,7 @@ const AdminPanel = ({ onProfileAdded }: AdminPanelProps) => {
     if (response.ok) {
       toast({
         title: 'Успех!',
-        description: 'Профиль добавлен',
+        description: editingProfile ? 'Профиль обновлен' : 'Профиль добавлен',
       });
       
       setName('');
@@ -136,6 +141,7 @@ const AdminPanel = ({ onProfileAdded }: AdminPanelProps) => {
       setCaste('');
       setPhotoFile(null);
       setPhotoPreview('');
+      setEditingProfile(null);
       loadProfiles();
       onProfileAdded();
     } else {
@@ -143,6 +149,26 @@ const AdminPanel = ({ onProfileAdded }: AdminPanelProps) => {
     }
     
     setLoading(false);
+  };
+
+  const handleEdit = (profile: Profile) => {
+    setEditingProfile(profile);
+    setName(profile.name);
+    setUsername(profile.username || '');
+    setDescription(profile.description || '');
+    setCaste(profile.caste);
+    setPhotoPreview(profile.photo_url || '');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingProfile(null);
+    setName('');
+    setUsername('');
+    setDescription('');
+    setCaste('');
+    setPhotoFile(null);
+    setPhotoPreview('');
   };
 
   const handleDelete = async (profileId: number) => {
@@ -174,11 +200,24 @@ const AdminPanel = ({ onProfileAdded }: AdminPanelProps) => {
   return (
     <div className="space-y-6">
       <Card className="p-6 md:p-8 neon-border bg-card/80 backdrop-blur-sm animate-scale-in">
-        <div className="flex items-center gap-3 mb-6">
-          <Icon name="UserPlus" className="text-primary" size={32} />
-          <h2 className="text-2xl md:text-3xl font-orbitron font-bold neon-glow text-primary">
-            Добавить личность
-          </h2>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <Icon name={editingProfile ? "Edit" : "UserPlus"} className="text-primary" size={32} />
+            <h2 className="text-2xl md:text-3xl font-orbitron font-bold neon-glow text-primary">
+              {editingProfile ? 'Редактировать личность' : 'Добавить личность'}
+            </h2>
+          </div>
+          {editingProfile && (
+            <Button
+              type="button"
+              onClick={handleCancelEdit}
+              variant="ghost"
+              className="neon-border"
+            >
+              <Icon name="X" size={20} className="mr-2" />
+              Отмена
+            </Button>
+          )}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -274,6 +313,11 @@ const AdminPanel = ({ onProfileAdded }: AdminPanelProps) => {
               <Icon name="Loader2" className="mr-2 animate-spin" size={20} />
               Загрузка...
             </>
+          ) : editingProfile ? (
+            <>
+              <Icon name="Save" className="mr-2" size={20} />
+              Сохранить изменения
+            </>
           ) : (
             <>
               <Icon name="Plus" className="mr-2" size={20} />
@@ -326,14 +370,24 @@ const AdminPanel = ({ onProfileAdded }: AdminPanelProps) => {
                   </span>
                 </div>
               </div>
-              <Button
-                onClick={() => handleDelete(profile.id)}
-                variant="destructive"
-                size="sm"
-                className="neon-border"
-              >
-                <Icon name="Trash2" size={16} />
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => handleEdit(profile)}
+                  variant="outline"
+                  size="sm"
+                  className="neon-border"
+                >
+                  <Icon name="Edit" size={16} />
+                </Button>
+                <Button
+                  onClick={() => handleDelete(profile.id)}
+                  variant="destructive"
+                  size="sm"
+                  className="neon-border"
+                >
+                  <Icon name="Trash2" size={16} />
+                </Button>
+              </div>
             </div>
           ))}
         </div>

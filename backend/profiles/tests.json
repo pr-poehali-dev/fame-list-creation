@@ -27,6 +27,23 @@
         "message": "string"
       },
       "bodyMatcher": "partial"
+    },
+    {
+      "name": "Update profile",
+      "method": "PATCH",
+      "path": "/?id=1",
+      "body": {
+        "name": "Updated User",
+        "username": "@updated",
+        "description": "Updated description",
+        "photo_url": "https://example.com/new.jpg",
+        "caste": "фейм"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "message": "string"
+      },
+      "bodyMatcher": "partial"
     }
   ]
 }

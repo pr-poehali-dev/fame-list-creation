@@ -1,5 +1,5 @@
 '''
-Business: Manages fame profiles - create, list, increment views
+Business: Manages fame profiles - create, list, update, increment views, delete
 Args: event with httpMethod, body, queryStringParameters
 Returns: JSON response with profiles or status
 '''
@@ -20,7 +20,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             'statusCode': 200,
             'headers': {
                 'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
                 'Access-Control-Allow-Headers': 'Content-Type, X-Admin-Secret',
                 'Access-Control-Max-Age': '86400'
             },
@@ -120,6 +120,50 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             'statusCode': 200,
             'headers': headers,
             'body': json.dumps({'message': 'View incremented'}),
+            'isBase64Encoded': False
+        }
+    
+    if method == 'PATCH':
+        params = event.get('queryStringParameters', {})
+        profile_id = params.get('id')
+        
+        if not profile_id:
+            return {
+                'statusCode': 400,
+                'headers': headers,
+                'body': json.dumps({'error': 'Profile ID required'}),
+                'isBase64Encoded': False
+            }
+        
+        body_data = json.loads(event.get('body', '{}'))
+        name = body_data.get('name')
+        username = body_data.get('username', '')
+        description = body_data.get('description', '')
+        photo_url = body_data.get('photo_url', '')
+        caste = body_data.get('caste')
+        
+        if not name or not caste:
+            return {
+                'statusCode': 400,
+                'headers': headers,
+                'body': json.dumps({'error': 'Name and caste are required'}),
+                'isBase64Encoded': False
+            }
+        
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute(
+            'UPDATE fame_profiles SET name = %s, username = %s, description = %s, photo_url = %s, caste = %s WHERE id = %s',
+            (name, username, description, photo_url, caste, profile_id)
+        )
+        conn.commit()
+        cur.close()
+        conn.close()
+        
+        return {
+            'statusCode': 200,
+            'headers': headers,
+            'body': json.dumps({'message': 'Profile updated'}),
             'isBase64Encoded': False
         }
     

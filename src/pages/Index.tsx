@@ -78,14 +78,24 @@ const Index = () => {
             <h1 className="text-4xl md:text-5xl font-orbitron font-bold neon-glow text-primary">
               FAME LIST
             </h1>
-            <Button
-              onClick={handleAdminClick}
-              className="bg-primary hover:bg-primary/80 neon-border font-orbitron"
-              size="lg"
-            >
-              <Icon name="Settings" className="mr-2" size={20} />
-              {showAdmin ? 'Закрыть' : 'Админка'}
-            </Button>
+            <div className="flex gap-3">
+              <Button
+                onClick={() => window.open('https://t.me/telorezov', '_blank')}
+                className="bg-gradient-to-r from-secondary to-accent hover:from-secondary/80 hover:to-accent/80 neon-border font-orbitron"
+                size="lg"
+              >
+                <Icon name="UserPlus" className="mr-2" size={20} />
+                Подать заявку
+              </Button>
+              <Button
+                onClick={handleAdminClick}
+                className="bg-primary hover:bg-primary/80 neon-border font-orbitron"
+                size="lg"
+              >
+                <Icon name="Settings" className="mr-2" size={20} />
+                {showAdmin ? 'Закрыть' : 'Админка'}
+              </Button>
+            </div>
           </div>
         </div>
       </header>
