@@ -1,0 +1,32 @@
+{
+  "tests": [
+    {
+      "name": "Get all profiles",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "profiles": "array"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Create new profile",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "name": "Test User",
+        "username": "@testuser",
+        "description": "Test description",
+        "photo_url": "https://example.com/photo.jpg",
+        "caste": "новичок"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": "number",
+        "message": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
