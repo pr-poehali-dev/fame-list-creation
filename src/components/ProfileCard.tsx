@@ -69,6 +69,17 @@ const ProfileCard = ({ profile, onClick, onLike, isLiked }: ProfileCardProps) =>
             <Icon name="User" size={64} className="text-muted-foreground/30" />
           </div>
         )}
+        
+        {profile.username === '@telorezov' && (
+          <div className="absolute -top-1 -right-1 md:-top-2 md:-right-2 z-10 animate-bounce-slow">
+            <Icon 
+              name="Crown" 
+              size={24} 
+              className="md:w-8 md:h-8 text-yellow-400 drop-shadow-[0_0_10px_rgba(250,204,21,0.8)] fill-yellow-400 rotate-[25deg]" 
+            />
+          </div>
+        )}
+        
         <div className="absolute top-1 md:top-2 right-1 md:right-2">
           <Badge className={`${getCasteBadgeColor(profile.caste)} font-orbitron text-[8px] md:text-xs px-1.5 md:px-2 py-0.5`}>
             {profile.caste}

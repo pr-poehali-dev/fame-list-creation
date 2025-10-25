@@ -163,6 +163,16 @@ export default {
 					'100%': {
 						borderColor: 'hsl(var(--neon-purple))'
 					}
+				},
+				'bounce-slow': {
+					'0%, 100%': {
+						transform: 'translateY(0) rotate(25deg)',
+						animationTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)'
+					},
+					'50%': {
+						transform: 'translateY(-10px) rotate(25deg)',
+						animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)'
+					}
 				}
 			},
 			animation: {
@@ -174,7 +184,8 @@ export default {
 				'gradient-shift': 'gradient-shift 4s ease-in-out infinite',
 				'fall': 'fall linear infinite',
 				'glow-pulse': 'glow-pulse 1.5s ease-in-out infinite',
-				'rainbow-border': 'rainbow-border 3s linear infinite'
+				'rainbow-border': 'rainbow-border 3s linear infinite',
+				'bounce-slow': 'bounce-slow 2s ease-in-out infinite'
 			}
 		}
 	},
