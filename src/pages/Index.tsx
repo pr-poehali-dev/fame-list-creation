@@ -90,10 +90,11 @@ const Index = () => {
                 FAME LIST
               </h1>
               <p 
-                className="text-xs text-muted-foreground font-roboto mt-1 cursor-pointer hover:text-primary transition-colors flex items-center gap-1"
+                className="text-xs font-roboto mt-1 cursor-pointer flex items-center gap-1 bg-gradient-to-r from-neon-purple via-neon-cyan to-neon-pink bg-[length:200%_auto] text-transparent bg-clip-text animate-gradient-shift"
                 onClick={() => window.open('https://t.me/telorezov', '_blank')}
+                style={{ backgroundSize: '200% auto' }}
               >
-                <Icon name="Send" size={12} className="hover:text-secondary transition-colors" />
+                <Icon name="Send" size={12} className="text-neon-cyan" />
                 владелец @telorezov
               </p>
             </div>
