@@ -22,7 +22,7 @@ const ComplaintForm = ({ isOpen, onClose }: ComplaintFormProps) => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('https://functions.poehali.dev/85f06f0a-8e44-46aa-a0f9-65e6a6b44654', {
+      const response = await fetch('https://functions.poehali.dev/aecf8999-fe28-4e6a-9d4e-e6e487707238', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

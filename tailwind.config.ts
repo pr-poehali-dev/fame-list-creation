@@ -123,6 +123,22 @@ export default {
 						backgroundPosition: '50% 50%',
 						filter: 'brightness(1.2) drop-shadow(0 0 12px hsl(var(--neon-cyan)))'
 					}
+				},
+				'fall': {
+					'0%': { 
+						transform: 'translateY(-10px) translateX(0)',
+						opacity: '0'
+					},
+					'10%': {
+						opacity: '1'
+					},
+					'90%': {
+						opacity: '1'
+					},
+					'100%': { 
+						transform: 'translateY(100vh) translateX(20px)',
+						opacity: '0'
+					}
 				}
 			},
 			animation: {
@@ -131,7 +147,8 @@ export default {
 				'neon-pulse': 'neon-pulse 2s ease-in-out infinite',
 				'fade-in': 'fade-in 0.3s ease-out',
 				'scale-in': 'scale-in 0.2s ease-out',
-				'gradient-shift': 'gradient-shift 4s ease-in-out infinite'
+				'gradient-shift': 'gradient-shift 4s ease-in-out infinite',
+				'fall': 'fall linear infinite'
 			}
 		}
 	},

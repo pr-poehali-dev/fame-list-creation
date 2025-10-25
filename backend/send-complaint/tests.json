@@ -1,0 +1,28 @@
+{
+  "tests": [
+    {
+      "name": "OPTIONS request for CORS",
+      "method": "OPTIONS",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedHeaders": {
+        "Access-Control-Allow-Origin": "*"
+      }
+    },
+    {
+      "name": "POST complaint submission",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "telegram": "@testuser",
+        "targetUser": "@targetuser",
+        "reason": "Test complaint reason"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": "boolean"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

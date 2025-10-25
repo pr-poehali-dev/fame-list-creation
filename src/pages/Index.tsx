@@ -8,6 +8,7 @@ import ProfileCard from '@/components/ProfileCard';
 import ProfileModal from '@/components/ProfileModal';
 import PasswordDialog from '@/components/PasswordDialog';
 import ComplaintForm from '@/components/ComplaintForm';
+import Snowfall from '@/components/Snowfall';
 
 interface Profile {
   id: number;
@@ -82,6 +83,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Snowfall />
       <div className="fixed top-0 left-0 w-full h-1 bg-gradient-to-r from-neon-purple via-neon-cyan to-neon-pink animate-neon-pulse z-50" />
       
       <header className="border-b border-border/50 backdrop-blur-sm sticky top-0 z-40">
