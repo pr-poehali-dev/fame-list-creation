@@ -22,6 +22,15 @@ interface Profile {
 
 const CASTES = ['главный фейм', 'фейм', 'средний фейм', 'малый фейм', 'новичок', 'скамер'];
 
+const CASTE_ORDER: Record<string, number> = {
+  'главный фейм': 1,
+  'фейм': 2,
+  'средний фейм': 3,
+  'малый фейм': 4,
+  'новичок': 5,
+  'скамер': 6
+};
+
 const Index = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [showAdmin, setShowAdmin] = useState(false);
@@ -190,6 +199,7 @@ const Index = () => {
           <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
             {profiles
               .filter(p => selectedCaste === 'all' || p.caste === selectedCaste)
+              .sort((a, b) => (CASTE_ORDER[a.caste] || 999) - (CASTE_ORDER[b.caste] || 999))
               .map((profile, index) => (
               <div
                 key={profile.id}
