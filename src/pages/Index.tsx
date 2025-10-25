@@ -45,8 +45,21 @@ const Index = () => {
 
   const loadProfiles = async () => {
     try {
-      const response = await fetch('https://functions.poehali.dev/eb6fcdbf-3fd0-41ea-ba77-12004c31e7eb');
+      const response = await fetch('https://functions.poehali.dev/eb6fcdbf-3fd0-41ea-ba77-12004c31e7eb', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        console.error('HTTP error:', response.status, response.statusText);
+        setLoading(false);
+        return;
+      }
+      
       const data = await response.json();
+      console.log('Loaded profiles:', data.profiles?.length || 0);
       setProfiles(data.profiles || []);
     } catch (error) {
       console.error('Error loading profiles:', error);
