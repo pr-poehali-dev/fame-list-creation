@@ -1,6 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
+import { playClickSound } from '@/utils/sound';
 
 interface Profile {
   id: number;
@@ -37,10 +38,15 @@ const getCasteBadgeColor = (caste: string) => {
 };
 
 const ProfileCard = ({ profile, onClick }: ProfileCardProps) => {
+  const handleClick = () => {
+    playClickSound();
+    onClick();
+  };
+
   return (
     <Card
       className="overflow-hidden neon-border hover:scale-[1.02] transition-all duration-300 cursor-pointer group bg-card/50 backdrop-blur-sm"
-      onClick={onClick}
+      onClick={handleClick}
     >
       <div className="relative aspect-square overflow-hidden">
         {profile.photo_url ? (
