@@ -85,9 +85,14 @@ const Index = () => {
       <header className="border-b border-border/50 backdrop-blur-sm sticky top-0 z-40">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-4xl md:text-5xl font-orbitron font-bold neon-glow text-primary">
-              FAME LIST
-            </h1>
+            <div>
+              <h1 className="text-4xl md:text-5xl font-orbitron font-bold neon-glow text-primary">
+                FAME LIST
+              </h1>
+              <p className="text-xs text-muted-foreground font-roboto mt-1">
+                владелец @telorezov
+              </p>
+            </div>
             <div className="flex flex-col gap-2 items-end">
               <Button
                 onClick={() => window.open('https://t.me/telorezov', '_blank')}
