@@ -7,6 +7,7 @@ import AdminPanel from '@/components/AdminPanel';
 import ProfileCard from '@/components/ProfileCard';
 import ProfileModal from '@/components/ProfileModal';
 import PasswordDialog from '@/components/PasswordDialog';
+import ComplaintForm from '@/components/ComplaintForm';
 
 interface Profile {
   id: number;
@@ -28,6 +29,7 @@ const Index = () => {
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [selectedCaste, setSelectedCaste] = useState<string>('all');
+  const [showComplaintForm, setShowComplaintForm] = useState(false);
 
   const loadProfiles = async () => {
     try {
@@ -193,9 +195,18 @@ const Index = () => {
 
       <footer className="border-t border-border/50 mt-20 py-8">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-muted-foreground font-roboto">
+          <p className="text-muted-foreground font-roboto mb-4">
             Fame List <span className="neon-pink-glow">★</span> 2025
           </p>
+          <Button
+            onClick={() => setShowComplaintForm(true)}
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground hover:text-primary hover:bg-primary/10 font-roboto text-xs"
+          >
+            <Icon name="AlertCircle" className="mr-2" size={14} />
+            Оспорить решение администратора
+          </Button>
         </div>
       </footer>
 
@@ -209,6 +220,11 @@ const Index = () => {
         isOpen={showPasswordDialog}
         onClose={() => setShowPasswordDialog(false)}
         onSuccess={handlePasswordSuccess}
+      />
+
+      <ComplaintForm
+        isOpen={showComplaintForm}
+        onClose={() => setShowComplaintForm(false)}
       />
     </div>
   );
