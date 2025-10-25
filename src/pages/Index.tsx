@@ -138,6 +138,7 @@ const Index = () => {
             className="mb-4 bg-gradient-to-r from-neon-purple to-neon-pink hover:from-neon-purple/80 hover:to-neon-pink/80 neon-border font-orbitron"
             size="sm"
           >
+            <Icon name="Send" className="mr-2" size={16} />
             Adapter создателя
           </Button>
           <p className="text-muted-foreground text-lg font-roboto mb-6">
