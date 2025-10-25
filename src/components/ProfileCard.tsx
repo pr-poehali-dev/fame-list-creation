@@ -18,6 +18,7 @@ interface ProfileCardProps {
   profile: Profile;
   onClick: () => void;
   onLike: (e: React.MouseEvent) => void;
+  isLiked: boolean;
 }
 
 const getCasteBadgeColor = (caste: string) => {
@@ -39,7 +40,7 @@ const getCasteBadgeColor = (caste: string) => {
   }
 };
 
-const ProfileCard = ({ profile, onClick, onLike }: ProfileCardProps) => {
+const ProfileCard = ({ profile, onClick, onLike, isLiked }: ProfileCardProps) => {
   const handleClick = () => {
     playClickSound();
     onClick();
@@ -92,9 +93,17 @@ const ProfileCard = ({ profile, onClick, onLike }: ProfileCardProps) => {
             </p>
             <button
               onClick={handleLike}
-              className="flex items-center gap-0.5 text-neon-pink hover:text-neon-purple transition-colors hover:scale-110 active:scale-95 transform duration-200"
+              className={`flex items-center gap-0.5 transition-colors hover:scale-110 active:scale-95 transform duration-200 ${
+                isLiked 
+                  ? 'text-neon-pink animate-pulse' 
+                  : 'text-neon-pink/50 hover:text-neon-pink'
+              }`}
             >
-              <Icon name="Heart" size={12} className="md:w-4 md:h-4" />
+              <Icon 
+                name="Heart" 
+                size={12} 
+                className={`md:w-4 md:h-4 ${isLiked ? 'fill-current' : ''}`} 
+              />
               <span className="text-[10px] md:text-xs font-roboto font-bold">{profile.likes || 0}</span>
             </button>
           </div>

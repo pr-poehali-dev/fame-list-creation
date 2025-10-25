@@ -41,6 +41,7 @@ const Index = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [selectedCaste, setSelectedCaste] = useState<string>('all');
   const [showComplaintForm, setShowComplaintForm] = useState(false);
+  const [likedProfiles, setLikedProfiles] = useState<Set<number>>(new Set());
 
   const loadProfiles = async () => {
     try {
@@ -56,6 +57,14 @@ const Index = () => {
 
   useEffect(() => {
     loadProfiles();
+    
+    const liked = new Set<number>();
+    profiles.forEach(p => {
+      if (localStorage.getItem(`liked_profile_${p.id}`)) {
+        liked.add(p.id);
+      }
+    });
+    setLikedProfiles(liked);
   }, []);
 
   const handleProfileClick = async (profile: Profile) => {
@@ -90,6 +99,7 @@ const Index = () => {
       const data = await response.json();
       
       localStorage.setItem(likedKey, 'true');
+      setLikedProfiles(prev => new Set(prev).add(profile.id));
       
       setProfiles(prev => prev.map(p => 
         p.id === profile.id ? { ...p, likes: data.likes } : p
@@ -233,6 +243,7 @@ const Index = () => {
                   profile={profile} 
                   onClick={() => handleProfileClick(profile)} 
                   onLike={() => handleProfileLike(profile)}
+                  isLiked={likedProfiles.has(profile.id)}
                 />
               </div>
             ))}
