@@ -89,7 +89,10 @@ const Index = () => {
               <h1 className="text-4xl md:text-5xl font-orbitron font-bold neon-glow text-primary">
                 FAME LIST
               </h1>
-              <p className="text-xs text-muted-foreground font-roboto mt-1">
+              <p 
+                className="text-xs text-muted-foreground font-roboto mt-1 cursor-pointer hover:text-primary transition-colors"
+                onClick={() => window.open('https://t.me/telorezov', '_blank')}
+              >
                 владелец @telorezov
               </p>
             </div>
