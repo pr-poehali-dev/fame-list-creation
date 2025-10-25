@@ -1,12 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
 import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
+
+interface Profile {
+  id: number;
+  name: string;
+  username: string;
+  caste: string;
+  views: number;
+}
 
 interface AdminPanelProps {
   onProfileAdded: () => void;
@@ -22,7 +31,25 @@ const AdminPanel = ({ onProfileAdded }: AdminPanelProps) => {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState('');
   const [loading, setLoading] = useState(false);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [loadingProfiles, setLoadingProfiles] = useState(true);
   const { toast } = useToast();
+
+  const loadProfiles = async () => {
+    try {
+      const response = await fetch('https://functions.poehali.dev/eb6fcdbf-3fd0-41ea-ba77-12004c31e7eb');
+      const data = await response.json();
+      setProfiles(data.profiles || []);
+    } catch (error) {
+      console.error('Error loading profiles:', error);
+    } finally {
+      setLoadingProfiles(false);
+    }
+  };
+
+  useEffect(() => {
+    loadProfiles();
+  }, []);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -109,6 +136,7 @@ const AdminPanel = ({ onProfileAdded }: AdminPanelProps) => {
       setCaste('');
       setPhotoFile(null);
       setPhotoPreview('');
+      loadProfiles();
       onProfileAdded();
     } else {
       throw new Error('Failed to save profile');
@@ -117,16 +145,43 @@ const AdminPanel = ({ onProfileAdded }: AdminPanelProps) => {
     setLoading(false);
   };
 
-  return (
-    <Card className="p-6 md:p-8 neon-border bg-card/80 backdrop-blur-sm animate-scale-in">
-      <div className="flex items-center gap-3 mb-6">
-        <Icon name="UserPlus" className="text-primary" size={32} />
-        <h2 className="text-2xl md:text-3xl font-orbitron font-bold neon-glow text-primary">
-          Админ-панель
-        </h2>
-      </div>
+  const handleDelete = async (profileId: number) => {
+    if (!confirm('Удалить эту личность?')) return;
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+    try {
+      const response = await fetch(`https://functions.poehali.dev/eb6fcdbf-3fd0-41ea-ba77-12004c31e7eb?id=${profileId}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        toast({
+          title: 'Удалено',
+          description: 'Профиль удален',
+        });
+        loadProfiles();
+        onProfileAdded();
+      }
+    } catch (error) {
+      console.error('Error deleting profile:', error);
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось удалить профиль',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <Card className="p-6 md:p-8 neon-border bg-card/80 backdrop-blur-sm animate-scale-in">
+        <div className="flex items-center gap-3 mb-6">
+          <Icon name="UserPlus" className="text-primary" size={32} />
+          <h2 className="text-2xl md:text-3xl font-orbitron font-bold neon-glow text-primary">
+            Добавить личность
+          </h2>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <Label htmlFor="name" className="font-orbitron text-foreground">
@@ -228,6 +283,63 @@ const AdminPanel = ({ onProfileAdded }: AdminPanelProps) => {
         </Button>
       </form>
     </Card>
+
+    <Card className="p-6 md:p-8 neon-border bg-card/80 backdrop-blur-sm">
+      <div className="flex items-center gap-3 mb-6">
+        <Icon name="Users" className="text-secondary" size={32} />
+        <h2 className="text-2xl md:text-3xl font-orbitron font-bold neon-cyan-glow text-secondary">
+          Управление личностями
+        </h2>
+      </div>
+
+      {loadingProfiles ? (
+        <div className="flex justify-center py-8">
+          <Icon name="Loader2" className="animate-spin text-primary" size={32} />
+        </div>
+      ) : profiles.length === 0 ? (
+        <p className="text-center text-muted-foreground py-8 font-roboto">
+          Нет добавленных личностей
+        </p>
+      ) : (
+        <div className="space-y-3">
+          {profiles.map((profile) => (
+            <div
+              key={profile.id}
+              className="flex items-center justify-between p-4 rounded-lg bg-muted/50 neon-border hover:bg-muted/70 transition-colors"
+            >
+              <div className="flex-1">
+                <h3 className="font-orbitron font-bold text-foreground mb-1">
+                  {profile.name}
+                </h3>
+                <div className="flex items-center gap-3 text-sm">
+                  <span className="text-muted-foreground font-roboto">
+                    {profile.caste}
+                  </span>
+                  {profile.username && (
+                    <span className="text-secondary neon-cyan-glow">
+                      {profile.username}
+                    </span>
+                  )}
+                  <span className="text-muted-foreground flex items-center gap-1">
+                    <Icon name="Eye" size={14} />
+                    {profile.views}
+                  </span>
+                </div>
+              </div>
+              <Button
+                onClick={() => handleDelete(profile.id)}
+                variant="destructive"
+                size="sm"
+                className="neon-border"
+              >
+                <Icon name="Trash2" size={16} />
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
+    </Card>
+  </div>
   );
 };
 

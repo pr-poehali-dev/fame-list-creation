@@ -20,7 +20,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             'statusCode': 200,
             'headers': {
                 'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
+                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
                 'Access-Control-Allow-Headers': 'Content-Type, X-Admin-Secret',
                 'Access-Control-Max-Age': '86400'
             },
@@ -120,6 +120,32 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             'statusCode': 200,
             'headers': headers,
             'body': json.dumps({'message': 'View incremented'}),
+            'isBase64Encoded': False
+        }
+    
+    if method == 'DELETE':
+        params = event.get('queryStringParameters', {})
+        profile_id = params.get('id')
+        
+        if not profile_id:
+            return {
+                'statusCode': 400,
+                'headers': headers,
+                'body': json.dumps({'error': 'Profile ID required'}),
+                'isBase64Encoded': False
+            }
+        
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute('DELETE FROM fame_profiles WHERE id = %s', (profile_id,))
+        conn.commit()
+        cur.close()
+        conn.close()
+        
+        return {
+            'statusCode': 200,
+            'headers': headers,
+            'body': json.dumps({'message': 'Profile deleted'}),
             'isBase64Encoded': False
         }
     

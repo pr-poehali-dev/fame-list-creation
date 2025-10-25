@@ -5,6 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import AdminPanel from '@/components/AdminPanel';
 import ProfileCard from '@/components/ProfileCard';
+import ProfileModal from '@/components/ProfileModal';
+import PasswordDialog from '@/components/PasswordDialog';
 
 interface Profile {
   id: number;
@@ -20,6 +22,9 @@ const Index = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [showAdmin, setShowAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const loadProfiles = async () => {
     try {
@@ -37,15 +42,30 @@ const Index = () => {
     loadProfiles();
   }, []);
 
-  const handleProfileClick = async (profileId: number) => {
+  const handleProfileClick = async (profile: Profile) => {
+    setSelectedProfile(profile);
     try {
-      await fetch(`https://functions.poehali.dev/eb6fcdbf-3fd0-41ea-ba77-12004c31e7eb?id=${profileId}`, {
+      await fetch(`https://functions.poehali.dev/eb6fcdbf-3fd0-41ea-ba77-12004c31e7eb?id=${profile.id}`, {
         method: 'PUT'
       });
       loadProfiles();
     } catch (error) {
       console.error('Error incrementing view:', error);
     }
+  };
+
+  const handleAdminClick = () => {
+    if (!isAuthenticated) {
+      setShowPasswordDialog(true);
+    } else {
+      setShowAdmin(!showAdmin);
+    }
+  };
+
+  const handlePasswordSuccess = () => {
+    setIsAuthenticated(true);
+    setShowPasswordDialog(false);
+    setShowAdmin(true);
   };
 
   return (
@@ -59,7 +79,7 @@ const Index = () => {
               FAME LIST
             </h1>
             <Button
-              onClick={() => setShowAdmin(!showAdmin)}
+              onClick={handleAdminClick}
               className="bg-primary hover:bg-primary/80 neon-border font-orbitron"
               size="lg"
             >
@@ -119,7 +139,7 @@ const Index = () => {
                 className="animate-fade-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <ProfileCard profile={profile} onClick={() => handleProfileClick(profile.id)} />
+                <ProfileCard profile={profile} onClick={() => handleProfileClick(profile)} />
               </div>
             ))}
           </div>
@@ -133,6 +153,18 @@ const Index = () => {
           </p>
         </div>
       </footer>
+
+      <ProfileModal
+        profile={selectedProfile}
+        isOpen={!!selectedProfile}
+        onClose={() => setSelectedProfile(null)}
+      />
+
+      <PasswordDialog
+        isOpen={showPasswordDialog}
+        onClose={() => setShowPasswordDialog(false)}
+        onSuccess={handlePasswordSuccess}
+      />
     </div>
   );
 };
