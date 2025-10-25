@@ -45,6 +45,18 @@ const Index = () => {
 
   const loadProfiles = async () => {
     try {
+      const cachedProfiles = localStorage.getItem('cached_profiles');
+      const cacheTime = localStorage.getItem('profiles_cache_time');
+      const now = Date.now();
+      const CACHE_DURATION = 5 * 60 * 1000;
+      
+      if (cachedProfiles && cacheTime && (now - parseInt(cacheTime)) < CACHE_DURATION) {
+        console.log('Loading profiles from cache');
+        setProfiles(JSON.parse(cachedProfiles));
+        setLoading(false);
+        return;
+      }
+      
       const response = await fetch('https://functions.poehali.dev/eb6fcdbf-3fd0-41ea-ba77-12004c31e7eb', {
         method: 'GET',
         headers: {
@@ -54,15 +66,28 @@ const Index = () => {
       
       if (!response.ok) {
         console.error('HTTP error:', response.status, response.statusText);
+        if (cachedProfiles) {
+          console.log('Using old cache due to error');
+          setProfiles(JSON.parse(cachedProfiles));
+        }
         setLoading(false);
         return;
       }
       
       const data = await response.json();
-      console.log('Loaded profiles:', data.profiles?.length || 0);
-      setProfiles(data.profiles || []);
+      console.log('Loaded profiles from server:', data.profiles?.length || 0);
+      const profilesData = data.profiles || [];
+      
+      setProfiles(profilesData);
+      localStorage.setItem('cached_profiles', JSON.stringify(profilesData));
+      localStorage.setItem('profiles_cache_time', now.toString());
     } catch (error) {
       console.error('Error loading profiles:', error);
+      const cachedProfiles = localStorage.getItem('cached_profiles');
+      if (cachedProfiles) {
+        console.log('Using cache due to network error');
+        setProfiles(JSON.parse(cachedProfiles));
+      }
     } finally {
       setLoading(false);
     }
