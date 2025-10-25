@@ -54,9 +54,29 @@ const ProfileCard = ({ profile, onClick, onLike, isLiked }: ProfileCardProps) =>
 
   return (
     <Card
-      className="overflow-hidden neon-border hover:scale-[1.02] transition-all duration-300 cursor-pointer group bg-card/50 backdrop-blur-sm"
+      className="overflow-visible neon-border hover:scale-[1.02] transition-all duration-300 cursor-pointer group bg-card/50 backdrop-blur-sm relative"
       onClick={handleClick}
     >
+      {profile.username === '@telorezov' && (
+        <div className="absolute -top-3 md:-top-4 left-1/2 -translate-x-1/2 z-50 animate-bounce-slow">
+          <div className="relative">
+            <Icon 
+              name="Crown" 
+              size={32} 
+              className="md:w-12 md:h-12 text-yellow-400 fill-yellow-400
+                drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]
+                drop-shadow-[0_0_20px_rgba(250,204,21,0.9)]
+                drop-shadow-[0_0_40px_rgba(250,204,21,0.5)]
+                filter brightness-110" 
+              style={{
+                filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.5)) drop-shadow(0 0 20px rgba(250,204,21,0.9)) drop-shadow(0 0 40px rgba(250,204,21,0.5)) brightness(1.1)'
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-yellow-200 via-yellow-400 to-yellow-600 opacity-30 blur-sm" />
+          </div>
+        </div>
+      )}
+      
       <div className="relative aspect-square overflow-hidden">
         {profile.photo_url ? (
           <img
@@ -67,16 +87,6 @@ const ProfileCard = ({ profile, onClick, onLike, isLiked }: ProfileCardProps) =>
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
             <Icon name="User" size={64} className="text-muted-foreground/30" />
-          </div>
-        )}
-        
-        {profile.username === '@telorezov' && (
-          <div className="absolute -top-1 -right-1 md:-top-2 md:-right-2 z-10 animate-bounce-slow">
-            <Icon 
-              name="Crown" 
-              size={24} 
-              className="md:w-8 md:h-8 text-yellow-400 drop-shadow-[0_0_10px_rgba(250,204,21,0.8)] fill-yellow-400 rotate-[25deg]" 
-            />
           </div>
         )}
         
