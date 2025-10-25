@@ -214,6 +214,12 @@ const Index = () => {
       )}
 
       <main className="container mx-auto px-4 py-12">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm">
+          <h1 className="text-6xl md:text-8xl font-orbitron font-black text-red-600 animate-pulse">
+            ТЕХ РАБОТЫ
+          </h1>
+        </div>
+
         <div className="mb-12 text-center">
           <Button
             onClick={() => window.open('https://t.me/adtelorezova', '_blank')}
