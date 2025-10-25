@@ -54,31 +54,26 @@ const ProfileCard = ({ profile, onClick }: ProfileCardProps) => {
             <Icon name="User" size={64} className="text-muted-foreground/30" />
           </div>
         )}
-        <div className="absolute top-3 right-3">
-          <Badge className={`${getCasteBadgeColor(profile.caste)} font-orbitron text-xs px-3 py-1`}>
+        <div className="absolute top-1 md:top-2 right-1 md:right-2">
+          <Badge className={`${getCasteBadgeColor(profile.caste)} font-orbitron text-[8px] md:text-xs px-1.5 md:px-2 py-0.5`}>
             {profile.caste}
           </Badge>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
-          <div className="flex items-center gap-2 text-white/90">
-            <Icon name="Eye" size={16} />
-            <span className="font-roboto font-medium">{profile.views.toLocaleString()}</span>
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-1.5 md:p-3">
+          <div className="flex items-center gap-1 text-white/90">
+            <Icon name="Eye" size={12} className="md:w-4 md:h-4" />
+            <span className="font-roboto font-medium text-[10px] md:text-sm">{profile.views.toLocaleString()}</span>
           </div>
         </div>
       </div>
       
-      <div className="p-5">
-        <h3 className="font-orbitron font-bold text-xl mb-1 neon-glow text-foreground group-hover:text-primary transition-colors">
+      <div className="p-2 md:p-4">
+        <h3 className="font-orbitron font-bold text-xs md:text-base mb-0.5 neon-glow text-foreground group-hover:text-primary transition-colors truncate">
           {profile.name}
         </h3>
         {profile.username && (
-          <p className="text-secondary neon-cyan-glow text-sm mb-3 font-roboto">
+          <p className="text-secondary neon-cyan-glow text-[10px] md:text-xs font-roboto truncate">
             {profile.username}
-          </p>
-        )}
-        {profile.description && (
-          <p className="text-muted-foreground text-sm line-clamp-3 font-roboto">
-            {profile.description}
           </p>
         )}
       </div>

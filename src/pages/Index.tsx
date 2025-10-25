@@ -18,6 +18,8 @@ interface Profile {
   views: number;
 }
 
+const CASTES = ['главный фейм', 'фейм', 'средний фейм', 'малый фейм', 'новичок', 'скамер'];
+
 const Index = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [showAdmin, setShowAdmin] = useState(false);
@@ -25,6 +27,7 @@ const Index = () => {
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [selectedCaste, setSelectedCaste] = useState<string>('all');
 
   const loadProfiles = async () => {
     try {
@@ -44,13 +47,20 @@ const Index = () => {
 
   const handleProfileClick = async (profile: Profile) => {
     setSelectedProfile(profile);
-    try {
-      await fetch(`https://functions.poehali.dev/eb6fcdbf-3fd0-41ea-ba77-12004c31e7eb?id=${profile.id}`, {
-        method: 'PUT'
-      });
-      loadProfiles();
-    } catch (error) {
-      console.error('Error incrementing view:', error);
+    
+    const viewedKey = `viewed_profile_${profile.id}`;
+    const hasViewed = localStorage.getItem(viewedKey);
+    
+    if (!hasViewed) {
+      try {
+        await fetch(`https://functions.poehali.dev/eb6fcdbf-3fd0-41ea-ba77-12004c31e7eb?id=${profile.id}`, {
+          method: 'PUT'
+        });
+        localStorage.setItem(viewedKey, 'true');
+        loadProfiles();
+      } catch (error) {
+        console.error('Error incrementing view:', error);
+      }
     }
   };
 
@@ -108,19 +118,31 @@ const Index = () => {
 
       <main className="container mx-auto px-4 py-12">
         <div className="mb-12 text-center">
-          <p className="text-muted-foreground text-lg font-roboto">
+          <p className="text-muted-foreground text-lg font-roboto mb-6">
             <span className="neon-cyan-glow text-secondary">Рейтинг</span> известных личностей
           </p>
-          <div className="mt-4 flex flex-wrap justify-center gap-2">
-            <Badge variant="outline" className="neon-border text-primary font-orbitron">
-              Главный фейм
+          <div className="flex flex-wrap justify-center gap-2">
+            <Badge 
+              variant={selectedCaste === 'all' ? 'default' : 'outline'} 
+              className={`cursor-pointer font-orbitron transition-all ${
+                selectedCaste === 'all' ? 'neon-border bg-primary' : 'hover:bg-primary/20'
+              }`}
+              onClick={() => setSelectedCaste('all')}
+            >
+              Все
             </Badge>
-            <Badge variant="outline" className="border-secondary text-secondary font-orbitron">
-              Фейм
-            </Badge>
-            <Badge variant="outline" className="border-accent text-accent font-orbitron">
-              Средний фейм
-            </Badge>
+            {CASTES.map((caste) => (
+              <Badge 
+                key={caste}
+                variant={selectedCaste === caste ? 'default' : 'outline'} 
+                className={`cursor-pointer font-orbitron transition-all ${
+                  selectedCaste === caste ? 'neon-border bg-primary' : 'hover:bg-primary/20'
+                }`}
+                onClick={() => setSelectedCaste(caste)}
+              >
+                {caste}
+              </Badge>
+            ))}
           </div>
         </div>
 
@@ -142,8 +164,10 @@ const Index = () => {
             </Button>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {profiles.map((profile, index) => (
+          <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
+            {profiles
+              .filter(p => selectedCaste === 'all' || p.caste === selectedCaste)
+              .map((profile, index) => (
               <div
                 key={profile.id}
                 className="animate-fade-in"
